@@ -1,0 +1,42 @@
+[
+  {
+    "mmwrweek_end": "2026-07-18T00:00:00.000",
+    "level": "State",
+    "state": "MA",
+    "pathogen": "RSV",
+    "posted": "2026-07-31T00:00:00.000",
+    "tests_3wma": "*",
+    "detections_5wma": "*",
+    "percent_pos_3wma": "0.70"
+  },
+  {
+    "mmwrweek_end": "2026-07-18T00:00:00.000",
+    "level": "State",
+    "state": "MA",
+    "pathogen": "SARS-COV-2",
+    "posted": "2026-07-31T00:00:00.000",
+    "tests_3wma": "604",
+    "detections_5wma": "5",
+    "percent_pos_3wma": "0.83"
+  },
+  {
+    "mmwrweek_end": "2026-07-25T00:00:00.000",
+    "level": "State",
+    "state": "MA",
+    "pathogen": "RSV",
+    "posted": "2026-07-31T00:00:00.000",
+    "tests_3wma": "*",
+    "detections_5wma": "*",
+    "percent_pos_3wma": "0.80"
+  },
+  {
+    "mmwrweek_end": "2026-07-25T00:00:00.000",
+    "level": "State",
+    "state": "MA",
+    "pathogen": "SARS-COV-2",
+    "posted": "2026-07-31T00:00:00.000",
+    "tests_3wma": "507",
+    "detections_5wma": "6",
+    "percent_pos_3wma": "1.18"
+  }
+]

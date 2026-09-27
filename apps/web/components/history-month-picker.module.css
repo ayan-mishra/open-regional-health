@@ -1,0 +1,84 @@
+.field { width: 100%; min-width: 0; }
+.inset { padding: 18px 16px 0; }
+.field > .fieldLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.picker { position: relative; width: 100%; }
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.trigger {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 8px 11px 8px 13px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--separator);
+  border-radius: 12px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--canvas) 76%, var(--surface));
+  font-size: .875rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.trigger:hover { border-color: color-mix(in srgb, var(--text) 42%, var(--separator)); background: var(--surface); }
+.value { min-width: 0; overflow: hidden; display: block; color: inherit; font: inherit; text-overflow: ellipsis; white-space: nowrap; }
+.calendarIcon { width: 19px; height: 19px; flex: none; }
+.popover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  width: min(300px, calc(100vw - 40px));
+  padding: 12px;
+  border: 1px solid var(--separator);
+  border-radius: 12px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--canvas) 84%, var(--surface));
+  box-shadow: 0 18px 42px rgb(24 37 31 / .16);
+}
+.yearNav {
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  gap: 8px;
+  align-items: center;
+}
+.yearNav strong { font: 700 .8125rem/1 "IBM Plex Mono", monospace; text-align: center; }
+.yearNav button, .monthGrid button, .current {
+  min-height: var(--control-height);
+  border: 1px solid var(--separator);
+  border-radius: 12px;
+  color: var(--text);
+  background: transparent;
+  font-size: .75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.yearNav button { width: 44px; padding: 0; }
+.monthGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.monthGrid button { padding: 0 8px; }
+.yearNav button:hover:not(:disabled), .monthGrid button:hover:not(:disabled), .current:hover { background: var(--surface); }
+.monthGrid button[aria-pressed="true"] { border-color: var(--text); color: var(--canvas); background: var(--text); }
+.yearNav button:disabled, .monthGrid button:disabled { opacity: .4; cursor: not-allowed; }
+.current { width: 100%; margin-top: 10px; }
+.current[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 420px) {
+  .popover { right: 0; left: auto; }
+}

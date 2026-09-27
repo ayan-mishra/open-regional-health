@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_MALWARE_CHECK: "1"
+
+jobs:
+  lockfiles:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.10.8"
+          python-version: "3.12"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+          check-latest: false
+      - name: Activate the pinned package manager
+        run: corepack enable && corepack prepare pnpm@11.9.0 --activate
+      - name: Resolve package caches
+        id: cache-paths
+        run: |
+          echo "uv=$(uv cache dir)" >> "$GITHUB_OUTPUT"
+          echo "pnpm=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ steps.cache-paths.outputs.uv }}
+          key: uv-${{ runner.os }}-py3.12-cache-v1-${{ hashFiles('uv.lock') }}
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ steps.cache-paths.outputs.pnpm }}
+          key: pnpm-${{ runner.os }}-node22-pnpm11.9.0-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Verify and install locked dependencies
+        run: |
+          uv lock --check
+          uv sync --locked --all-extras
+          pnpm install --frozen-lockfile
+          git diff --exit-code -- uv.lock pnpm-lock.yaml
+          uv pip check
+      - name: Audit Python dependencies
+        run: |
+          uv export --locked --no-emit-project --all-extras --format requirements-txt --output-file /tmp/corvid-audit-requirements.txt
+          uv run --locked pip-audit --strict -r /tmp/corvid-audit-requirements.txt
+      - name: Audit production JavaScript dependencies
+        run: pnpm audit --prod --audit-level=high
+      - name: Audit all JavaScript dependencies
+        run: pnpm audit --audit-level=high
+
+  python:
+    needs: lockfiles
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.10.8"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv lock --check && uv sync --locked --all-extras
+      - name: Ruff
+        run: uv run --locked ruff check packages tests
+      - name: MyPy
+        run: uv run --locked mypy packages/corvid/src
+      - name: Python tests
+        run: uv run --locked pytest -q
+
+  migrations:
+    needs: lockfiles
+    runs-on: ubuntu-24.04
+    env:
+      CORVID_DATABASE_URL: sqlite+pysqlite:////tmp/corvid-migration.db
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.10.8"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - run: uv lock --check && uv sync --locked --all-extras
+      - name: Upgrade, downgrade, and re-upgrade schema
+        run: |
+          uv run --locked alembic -c packages/corvid/alembic.ini upgrade head
+          uv run --locked alembic -c packages/corvid/alembic.ini downgrade base
+          uv run --locked alembic -c packages/corvid/alembic.ini upgrade head
+
+  web:
+    needs: lockfiles
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22"
+          check-latest: false
+      - run: corepack enable && corepack prepare pnpm@11.9.0 --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Reject unsafe HTML sinks
+        run: |
+          if rg -n 'dangerouslySetInnerHTML|innerHTML\s*=' apps/web; then
+            echo 'Unsafe raw HTML sink found' >&2
+            exit 1
+          fi
+      - run: pnpm --dir apps/web lint
+      - run: pnpm --dir apps/web test
+      - run: pnpm --dir apps/web build
+
+  compose-config:
+    needs: lockfiles
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Render Compose configuration
+        run: |
+          docker compose config --quiet
+          docker compose config --format json > /tmp/corvid-compose.json
+      - name: Enforce least-privilege service policy
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          config = json.loads(Path('/tmp/corvid-compose.json').read_text())
+          services = config['services']
+          required = {'web'}
+          assert required <= services.keys(), required - services.keys()
+          for name, service in services.items():
+              assert not service.get('privileged', False), name
+              assert service.get('read_only') is True, name
+              assert 'ALL' in service.get('cap_drop', []), name
+              assert 'no-new-privileges:true' in service.get('security_opt', []), name
+              assert service.get('network_mode') != 'host', name
+              for volume in service.get('volumes', []):
+                  assert '/var/run/docker.sock' not in str(volume), name
+          assert services['web'].get('ports'), 'web must be the public edge'
+          PY
+      - name: Require non-root final images
+        run: |
+          grep -Eq '^USER[[:space:]]+[^[:space:]]+' apps/web/Dockerfile

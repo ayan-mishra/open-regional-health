@@ -1,0 +1,51 @@
+{
+  "name": "@corvid/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate:map": "node scripts/generate-us-map.mjs && node scripts/generate-us-preview.mjs",
+    "generate:population": "node scripts/generate-population-baseline.mjs",
+    "generate:preview": "node scripts/generate-us-preview.mjs",
+    "audit:coverage": "node scripts/audit-national-coverage.mjs",
+    "dev": "node ../../scripts/start-local.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@e965/xlsx": "0.20.3",
+    "@fontsource/geist": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
+    "fflate": "^0.8.3",
+    "next": "16.3.3",
+    "postcss": "8.5.23",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "recharts": "3.10.0",
+    "server-only": "0.0.1",
+    "sharp": "0.35.4",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/d3-geo": "^3.1.1",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "d3-geo": "^3.1.1",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.2.11",
+    "jsdom": "27.4.0",
+    "playwright-core": "1.61.1",
+    "shapefile": "^0.6.6",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  }
+}

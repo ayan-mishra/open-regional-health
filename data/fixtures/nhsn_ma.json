@@ -1,0 +1,6 @@
+[
+  {"weekendingdate":"2024-05-04T00:00:00.000","jurisdiction":"MA","totalconfflunewadm":"60.0","totalconfflunewadmper100k":"0.86","totalconfflunewadmhosprep":"82","totalconfflunewadmperchosprep":"91.11","numinptbeds":"16423.16","numinptbedshosprep":"82","numinptbedsperchosprep":"91.11","respseason":"2023-2024"},
+  {"weekendingdate":"2024-07-06T00:00:00.000","jurisdiction":"MA","totalconfflunewadm":"0.0","totalconfflunewadmper100k":"0.0","totalconfflunewadmhosprep":"1","totalconfflunewadmperchosprep":"1.11","numinptbeds":"141.0","numinptbedshosprep":"1","numinptbedsperchosprep":"1.11","respseason":"2023-2024"},
+  {"weekendingdate":"2024-11-02T00:00:00.000","jurisdiction":"MA","totalconfflunewadm":"3.0","totalconfflunewadmper100k":"0.04","totalconfflunewadmhosprep":"13","totalconfflunewadmperchosprep":"14.44","numinptbeds":"1552.0","numinptbedshosprep":"13","numinptbedsperchosprep":"14.44","respseason":"2024-2025"},
+  {"weekendingdate":"2026-07-18T00:00:00.000","jurisdiction":"MA","totalconfflunewadm":"0.0","totalconfflunewadmper100k":"0.0","totalconfflunewadmhosprep":"86","totalconfflunewadmperchosprep":"95.56","numinptbeds":"17001.0","numinptbedshosprep":"86","numinptbedsperchosprep":"95.56","respseason":"2025-2026"}
+]

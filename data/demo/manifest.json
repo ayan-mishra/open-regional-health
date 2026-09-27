@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "fixture_version": "ma-influenza-demo-v1",
+  "mode": "demo",
+  "as_of": "2025-02-14T23:00:00Z",
+  "data_file": "ma_influenza_weekly.csv",
+  "row_count": 125,
+  "geographies": ["ma", "ma-hsa-22"],
+  "official_source_url": "https://www.cdc.gov/nssp/",
+  "disclaimer": "Synthetic demonstration fixture only; this is not current surveillance or an authentic historical vintage and must not be used for diagnosis or care decisions."
+}

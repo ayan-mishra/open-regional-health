@@ -1,0 +1,10 @@
+import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const geometry = JSON.parse(await readFile(path.join(ROOT, "lib", "generated", "us-states.json"), "utf8"));
+const colors = ["#d7eadf", "#9fcbb4", "#61ad89", "#f2cf63", "#e6845e", "#bd473b"];
+const paths = geometry.states.map((state, index) => `<path d="${state.path}" fill="${colors[Math.floor(index * colors.length / geometry.states.length)]}"/>`).join("");
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${geometry.viewBox}" role="img"><g fill-rule="evenodd" stroke="#10271d" stroke-width="1.6" vector-effect="non-scaling-stroke">${paths}</g></svg>\n`;
+await writeFile(path.join(ROOT, "public", "geometry", "us-preview.svg"), svg);
+process.stdout.write(`Generated preview with ${geometry.states.length} states.\n`);

@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "corvid-health-intelligence"
+version = "0.1.0"
+description = "Corvid Health Intelligence services"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "alembic==1.18.5",
+    "httpx2==2.12.0",
+    "openpyxl==3.1.5",
+    "pydantic-settings==2.14.2",
+    "sqlalchemy==2.0.51",
+    "typer==0.20.0",
+    "tzdata==2025.2",
+]
+
+[project.scripts]
+corvid = "corvid.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "mypy==2.3.0",
+    "pytest==9.0.3",
+    "ruff==0.16.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["packages/corvid/src"]
+include = ["corvid*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["packages/corvid/src"]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = ["packages/corvid/src"]
+files = ["packages/corvid/src"]
+
+[dependency-groups]
+dev = [
+    "pip-audit==2.10.0",
+]
+
+[[tool.mypy.overrides]]
+module = ["openpyxl.*"]
+ignore_missing_imports = true
