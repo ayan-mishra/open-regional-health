@@ -15,7 +15,7 @@ dependencies = [
     "pydantic-settings==2.14.2",
     "sqlalchemy==2.0.51",
     "typer==0.20.0",
-    "tzdata==2025.2",
+    "tzdata==2026.4",
 ]
 
 [project.scripts]
