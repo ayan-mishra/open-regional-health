@@ -23,7 +23,7 @@ corvid = "corvid.cli:main"
 
 [project.optional-dependencies]
 dev = [
-    "mypy==2.3.0",
+    "mypy==2.3.1",
     "pytest==9.0.3",
     "ruff==0.16.0",
 ]
