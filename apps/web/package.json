@@ -27,7 +27,7 @@
     "recharts": "3.10.0",
     "server-only": "0.0.1",
     "sharp": "0.35.4",
-    "zod": "4.4.3"
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
